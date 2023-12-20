@@ -47,11 +47,12 @@ class URL_Projet {
   // Fonction pour l'ajout des paramètres
   Push(url, cle, valeur) {
 
-    // On verifie si cle est un chiffre
-    if (!isNaN(Number(cle))) {
-      throw new KeyError("La clé ne peut pas être que des chiffres.");
+    //Verification si l'url inserer est vide
+    if(url.length === 0){
+      throw new EmptyParameter("L'URL ne peut etre vide.");
     }
 
+    
     //Verication s'il y a des espaces blancs dans les insertions
     if(cle.includes(" ")){
       throw new BlankSpaceFound("La cle ne peut pas contenir d'espaces blanc");
@@ -63,7 +64,7 @@ class URL_Projet {
 
     
 
-    //Verification si l'url cle ou la valeur inserer est vide
+    //Verification si l'url inserer est vide
     if(url.length === 0){
       throw new EmptyParameter("L'URL ne peut etre vide.");
     }
@@ -75,6 +76,11 @@ class URL_Projet {
       throw new EmptyParameter("La valeur ne peut pas être vide.");
     } else if (!cle) {
       throw new EmptyParameter("La clé ne peut pas être vide.");
+    }
+
+    // On verifie si cle est un chiffre
+    if (!isNaN(Number(cle))) {
+      throw new KeyError("La clé ne peut pas être que des chiffres.");
     }
 
     //Verification si la cle et la valeur sont les memes
@@ -108,6 +114,11 @@ class URL_Projet {
       throw new BlankSpaceFound("La valeur ne peut pas contenir d'espaces blanc");
     }else if (url.includes(" ")){
       throw new BlankSpaceFound("L'URL'ne peut pas contenir d'espaces blanc");
+    }
+
+    //Verification si l'url  inserer est vide
+    if(url.length === 0){
+      throw new EmptyParameter("L'URL ne peut etre vide.");
     }
 
     //Verification si la cle et la nouvelle valeur sont vide
@@ -146,10 +157,14 @@ class URL_Projet {
   // Ajouter une méthode pour supprimer un paramètre de l'URL
   Remove(url, cle) {
 
+    //Verification si l'url inserer est vide
+    if(url.length === 0){
+      throw new EmptyParameter("L'URL ne peut etre vide.");
+    }
+
     if (!cle) {
       throw new EmptyParameter("Veuillez spécifier une clé pour la suppression.");
     }
-
 
     if (!this.Existe_Cle(url,cle)){
       throw new KeysNotFound("La clé insérer n'existe pas.")
@@ -173,6 +188,11 @@ class URL_Projet {
 
   //Fonction qui renvoie l'ensembre des parametres de l'URL (cle et leur valeur)
   Get(url) {
+
+    //Verification si l'url inserer est vide
+    if(url.length === 0){
+      throw new EmptyParameter("L'URL ne peut etre vide.");
+    }
     
     //On verifie si l'URL contien des espaces
     if (url.includes(" ")){
@@ -193,34 +213,27 @@ class URL_Projet {
   }
 
   //Fonction qui permet de verifier si la cle inserer par l'Utilisateur existe deja
-  Existe_Cle(url,new_cle){
-    
-    let parametres = {};
-    let get_cle;
-    
-    //On verifie si ? est present pour savoir si l'URL contien des cles
+  Existe_Cle(url, new_cle) {
+    // On vérifie si '?' est présent pour savoir si l'URL contient des clés
     if (url.includes("?")) {
-      //Partie parrametre contient toute la partie de l'URL apres le point d'interrogation
-      let partie_parametre = url.split("?")[1];
-      //On divise parametres_pairs en tableau, dans chaque case on a kle=valeur
-      let parametre_pairs = partie_parametre.split("&");
+        // Partie paramètre contient toute la partie de l'URL après le point d'interrogation
+        let partie_parametre = url.split("?")[1];
+        // On divise parametre_pairs en tableau, dans chaque case, on a cle=valeur
+        let parametre_pairs = partie_parametre.split("&");
 
-      //Boucle qui nous permet de parcourir le tableau et de recuperer chaque cle distinctes et leur valeurs
-      for (let i = 0; i < parametre_pairs.length; i++) {
-        let case_tableau = parametre_pairs[i];
-        let [cle, valeur] = case_tableau.split("=");
-        parametres[cle] = valeur;
-        get_cle = cle;
-      }
+        // Boucle qui nous permet de parcourir le tableau et de récupérer chaque cle distincte et leur valeurs
+        for (let i = 0; i < parametre_pairs.length; i++) {
+            let case_tableau = parametre_pairs[i];
+            let [cle, valeur] = case_tableau.split("=");
+            // Si la cle insérée existe déjà dans l'URL, on la retourne
+            if (new_cle === cle) {
+                return true;
+            }
+        }
     }
-
-    //Si la cle inserer existe deja dans l'Url on la retourne sinon on retourne false
-    if(new_cle === get_cle){
-      return get_cle;
-    }else{
-      return false;
-    }
-  }
+    // Si la cle insérée n'existe pas dans l'URL, on retourne false
+    return false;
+}
 
   // Fonction qui permet de recréer l'URL après chaque modification
   buildUrl(url, params) {
@@ -320,8 +333,8 @@ function RechercherCle() {
       resultatRechercheDiv.textContent = `Nom cle : [ "${cleRecherche}" ] \n || Valeur - "${parametres[cleRecherche]}".`;
       setTimeout(() => { resultatRechercheDiv.textContent = ''; }, 10000);
     } else {
-      resultatRechercheDiv.textContent = `La clé "${cleRecherche}" n'existe pas dans l'URL.`;
-      setTimeout(() => { resultatRechercheDiv.textContent = ''; }, 10000);
+      resultatRechercheDiv.textContent = `La clé [ "${cleRecherche}" ] n'existe pas dans l'URL.`;
+      setTimeout(() => { resultatRechercheDiv.textContent = ''; }, 4000);
     }
 
     // Effacer les messages d'erreur précédents
